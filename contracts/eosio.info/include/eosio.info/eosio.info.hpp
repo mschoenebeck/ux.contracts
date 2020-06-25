@@ -134,7 +134,8 @@ namespace eosio {
          typedef eosio::multi_index< "infokeytypes"_n, infokeytype > infokeytypes_table;
          typedef eosio::multi_index< "infouservers"_n, infouserver,
             indexed_by<"ckey"_n, const_mem_fun<infouserver, uint128_t, &infouserver::by_ckey> >, 
-            indexed_by<"user"_n, const_mem_fun<infouserver, uint64_t, &infouserver::by_user> > > infouservers_table;
+            indexed_by<"user"_n, const_mem_fun<infouserver, uint64_t, &infouserver::by_user> >,
+            indexed_by<"key"_n, const_mem_fun<infouserver, uint64_t, &infouserver::by_verification_key> > > infouservers_table;
          typedef eosio::multi_index< "infouserkeys"_n, infouserkey,
             indexed_by<"ckey"_n, const_mem_fun<infouserkey, uint128_t, &infouserkey::by_ckey> >, 
             indexed_by<"user"_n, const_mem_fun<infouserkey, uint64_t, &infouserkey::by_user> > > infouserkeys_table;
