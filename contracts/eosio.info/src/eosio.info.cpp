@@ -25,7 +25,7 @@ ACTION info::adduserver(const name user, const name verification_key)
   infokeytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(verification_key.value);
   check(kt_itr != kt_table.end(), "verification_key not permitted");
-//  check(!t_itr->user, "verification_key is user key");
+  check(!kt_itr->user, "verification_key is a user key");
 
   infouservers_table table(_self, _self.value);
   auto ckey = composite_key(user.value, verification_key.value);
@@ -51,7 +51,6 @@ ACTION info::setuserkey(const name user, const name key, const std::string memo)
   infokeytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(key.value);
   check(kt_itr != kt_table.end(), "verification_key not recognised");
-//  check(t_itr->user, "verification_key not user key");
 
   infouserkeys_table table(_self, _self.value);
   auto ckey = composite_key(user.value, key.value);
