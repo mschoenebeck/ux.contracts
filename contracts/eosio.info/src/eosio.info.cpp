@@ -1,3 +1,4 @@
+#include <eosio/system.hpp>
 #include <eosio.info/eosio.info.hpp>
 
 namespace eosio {
@@ -36,9 +37,9 @@ ACTION info::adduserver(const name user, const name verification_key)
 
   table.emplace(user, [&](auto& t) {
     t.id = table.available_primary_key();
-    t.ckey = ckey;
     t.user = user;
     t.verification_key = verification_key;
+    t.timestamp = current_time_point();
   });
 }
 
@@ -60,7 +61,6 @@ ACTION info::setuserkey(const name user, const name key, const std::string memo)
   if (itr == table.end()) {
     table.emplace(user, [&](auto& t) {
       t.id = table.available_primary_key();
-      t.ckey = ckey;
       t.user = user;
       t.key = key;
       t.memo = memo;

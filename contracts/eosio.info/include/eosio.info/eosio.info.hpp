@@ -105,12 +105,12 @@ namespace eosio {
           */
          struct [[eosio::table]] infouserver {
             uint64_t      id;
-            uint128_t     ckey;
             name          user;
             name          verification_key;
+            time_point    timestamp;
 
             uint64_t primary_key() const { return id; }
-            uint128_t by_ckey() const {return ckey; }
+            uint128_t by_ckey() const {return composite_key(user.value, verification_key.value); }
             uint64_t by_user() const {return user.value; }
             uint64_t by_verification_key() const {return verification_key.value; }
          };
@@ -120,13 +120,12 @@ namespace eosio {
           */
          struct [[eosio::table]] infouserkey {
             uint64_t      id;
-            uint128_t     ckey;
             name          user;
             name          key;
             std::string   memo;
 
             uint64_t primary_key() const { return id; }
-            uint128_t by_ckey() const {return ckey; }
+            uint128_t by_ckey() const {return composite_key(user.value, key.value); }
             uint64_t by_user() const {return user.value; }
             uint64_t by_key() const {return key.value; }
          };
