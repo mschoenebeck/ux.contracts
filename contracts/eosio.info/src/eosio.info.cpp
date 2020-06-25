@@ -6,7 +6,7 @@ ACTION info::addkeytype(const name key, std::string definition, const bool user)
 {
   require_auth(_self);
 
-  infovertypes_table table(_self, _self.value);
+  infokeytypes_table table(_self, _self.value);
 
   auto itr = table.find(key.value);
   check(itr == table.end(), "key already exists");
@@ -18,52 +18,52 @@ ACTION info::addkeytype(const name key, std::string definition, const bool user)
   });
 }
 
-ACTION info::adduserver(const name user, const name verification_type)
+ACTION info::adduserver(const name user, const name verification_key)
 {
   require_auth(_self);
 
-  infovertypes_table kt_table(_self, _self.value);
-  auto kt_itr = kt_table.find(verification_type.value);
-  check(kt_itr != kt_table.end(), "verification_type not recognised");
-//  check(!t_itr->user, "verification_type is user key");
+  infokeytypes_table kt_table(_self, _self.value);
+  auto kt_itr = kt_table.find(verification_key.value);
+  check(kt_itr != kt_table.end(), "verification_key not permitted");
+//  check(!t_itr->user, "verification_key is user key");
 
   infouservers_table table(_self, _self.value);
-  auto c_key = composite_key(user.value, verification_type.value);
-  auto idx = table.get_index<"key"_n>();
-  auto itr = table.find(c_key);
+  auto ckey = composite_key(user.value, verification_key.value);
+  auto idx = table.get_index<"ckey"_n>();
+  auto itr = table.find(ckey);
 
   check(itr == table.end(), "user verification already present");
 
   table.emplace(user, [&](auto& t) {
     t.id = table.available_primary_key();
-    t.key = c_key;
+    t.ckey = ckey;
     t.user = user;
-    t.verification_type = verification_type;
+    t.verification_key = verification_key;
   });
 }
 
-ACTION info::setuserkey(const name user, const name verification_type, const std::string memo)
+ACTION info::setuserkey(const name user, const name key, const std::string memo)
 {
   require_auth(user);
 
   check(memo.length() <= 1024, "memo exceeds permitted length of 1024 chars");
 
-  infovertypes_table kt_table(_self, _self.value);
-  auto kt_itr = kt_table.find(verification_type.value);
-  check(kt_itr != kt_table.end(), "verification_type not recognised");
-//  check(t_itr->user, "verification_type not user key");
+  infokeytypes_table kt_table(_self, _self.value);
+  auto kt_itr = kt_table.find(key.value);
+  check(kt_itr != kt_table.end(), "verification_key not recognised");
+//  check(t_itr->user, "verification_key not user key");
 
   infouserkeys_table table(_self, _self.value);
-  auto c_key = composite_key(user.value, verification_type.value);
-  auto idx = table.get_index<"key"_n>();
-  auto itr = table.find(c_key);
+  auto ckey = composite_key(user.value, key.value);
+  auto idx = table.get_index<"ckey"_n>();
+  auto itr = table.find(ckey);
 
   if (itr == table.end()) {
     table.emplace(user, [&](auto& t) {
       t.id = table.available_primary_key();
-      t.key = c_key;
+      t.ckey = ckey;
       t.user = user;
-      t.verification_type = verification_type;
+      t.key = key;
       t.memo = memo;
     });
   } else {
@@ -73,14 +73,14 @@ ACTION info::setuserkey(const name user, const name verification_type, const std
   }
 }
 
-ACTION info::deluserkey(const name user, const name verification_type)
+ACTION info::deluserkey(const name user, const name key)
 {
   require_auth(user);
 
   infouserkeys_table table(_self, _self.value);
-  auto c_key = composite_key(user.value, verification_type.value);
-  auto idx = table.get_index<"key"_n>();
-  auto itr = table.find(c_key);
+  auto ckey = composite_key(user.value, key.value);
+  auto idx = table.get_index<"ckey"_n>();
+  auto itr = table.find(ckey);
 
   check(itr != table.end(), "user key not present");
 
