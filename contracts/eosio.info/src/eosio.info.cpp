@@ -23,6 +23,8 @@ ACTION info::adduserver(const name user, const name verification_key)
 {
   require_auth(_self);
 
+  check(is_account(user), "no account for specified user");
+
   infokeytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(verification_key.value);
   check(kt_itr != kt_table.end(), "verification_key not permitted");
@@ -31,9 +33,9 @@ ACTION info::adduserver(const name user, const name verification_key)
   infouservers_table table(_self, _self.value);
   auto ckey = composite_key(user.value, verification_key.value);
   auto idx = table.get_index<"ckey"_n>();
-  auto itr = table.find(ckey);
+  auto itr = idx.find(ckey);
 
-  check(itr == table.end(), "user verification already present");
+  check(itr == idx.end(), "user verification already present");
 
   table.emplace(user, [&](auto& t) {
     t.id = table.available_primary_key();
@@ -47,6 +49,8 @@ ACTION info::setuserkey(const name user, const name key, const std::string memo)
 {
   require_auth(user);
 
+  check(is_account(user), "no account for specified user");
+
   check(memo.length() <= 1024, "memo exceeds permitted length of 1024 chars");
 
   infokeytypes_table kt_table(_self, _self.value);
@@ -56,9 +60,9 @@ ACTION info::setuserkey(const name user, const name key, const std::string memo)
   infouserkeys_table table(_self, _self.value);
   auto ckey = composite_key(user.value, key.value);
   auto idx = table.get_index<"ckey"_n>();
-  auto itr = table.find(ckey);
+  auto itr = idx.find(ckey);
 
-  if (itr == table.end()) {
+  if (itr == idx.end()) {
     table.emplace(user, [&](auto& t) {
       t.id = table.available_primary_key();
       t.user = user;
@@ -76,14 +80,16 @@ ACTION info::deluserkey(const name user, const name key)
 {
   require_auth(user);
 
+  check(is_account(user), "no account for specified user");
+
   infouserkeys_table table(_self, _self.value);
   auto ckey = composite_key(user.value, key.value);
   auto idx = table.get_index<"ckey"_n>();
-  auto itr = table.find(ckey);
+  auto itr = idx.find(ckey);
 
-  check(itr != table.end(), "user key not present");
+  check(itr != idx.end(), "user key not present");
 
-  table.erase(itr);
+  idx.erase(itr);
 }
 
 } /// namespace eosio
