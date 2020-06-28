@@ -27,7 +27,7 @@ namespace eosio {
           * @param definition - a text string containing what the key refers to
           * @param user - whether the key refers to user info (true) or verification key (false)
           *
-          * @pre key must not already exist in infokeytype table
+          * @pre key must not already exist in keytype table
           */
          ACTION addkeytype(const name key, std::string definition, const bool user);
 
@@ -36,7 +36,7 @@ namespace eosio {
           *
           * @param key - the name of the verification or user info key
           *
-          * @pre key must be present in infokeytype table
+          * @pre key must be present in keytype table
           */
          //ACTION delkeytype(const name key);
 
@@ -46,7 +46,7 @@ namespace eosio {
           * @param user - the name of the user account
           * @param verification_type - the name of the verification key
           *
-          * @pre verification_key must be a key present in infokeytype table
+          * @pre verification_key must be a key present in keytype table
           */
          ACTION adduserver(const name user, const name verification_key);
 
@@ -56,7 +56,7 @@ namespace eosio {
           * @param user - the name of the user account
           * @param verification_key - the name of the verification key
           *
-          * @pre matching record must be present in infouserver table
+          * @pre matching record must be present in userverif table
           */
          // ACTION deluserver(const name user, const name verification_key);
 
@@ -67,7 +67,7 @@ namespace eosio {
           * @param key - the name of the verification or user key
           * @param memo - a text string of up to 1024 characters
           *
-          * @pre key must be a key present in infokeytype table
+          * @pre key must be a key present in keytype table
           * @pre memo length must not exceed 1024 characters
           */
          ACTION setuserkey(const name user, const name key, const std::string memo);
@@ -78,7 +78,7 @@ namespace eosio {
           * @param user - the name of the user account
           * @param key - the name of the verification key
           *
-          * @pre record must be present in infouserkey table
+          * @pre record must be present in userkey table
           */
          ACTION deluserkey(const name user, const name key);
 
@@ -92,7 +92,7 @@ namespace eosio {
          /**
           * stores the verification definitions
           */
-         struct [[eosio::table]] infokeytype {
+         struct [[eosio::table]] keytype {
             name          key;
             std::string   definition;
             bool          user;
@@ -103,7 +103,7 @@ namespace eosio {
          /**
           * stores the verifications added by the KYC provider
           */
-         struct [[eosio::table]] infouserver {
+         struct [[eosio::table]] userverif {
             uint64_t      id;
             name          user;
             name          verification_key;
@@ -118,7 +118,7 @@ namespace eosio {
          /**
           * stores the keys/verifications provided by user
           */
-         struct [[eosio::table]] infouserkey {
+         struct [[eosio::table]] userkey {
             uint64_t      id;
             name          user;
             name          key;
@@ -130,14 +130,14 @@ namespace eosio {
             uint64_t by_key() const {return key.value; }
          };
 
-         typedef eosio::multi_index< "infokeytypes"_n, infokeytype > infokeytypes_table;
-         typedef eosio::multi_index< "infouservers"_n, infouserver,
-            indexed_by<"ckey"_n, const_mem_fun<infouserver, uint128_t, &infouserver::by_ckey> >, 
-            indexed_by<"user"_n, const_mem_fun<infouserver, uint64_t, &infouserver::by_user> >,
-            indexed_by<"key"_n, const_mem_fun<infouserver, uint64_t, &infouserver::by_verification_key> > > infouservers_table;
-         typedef eosio::multi_index< "infouserkeys"_n, infouserkey,
-            indexed_by<"ckey"_n, const_mem_fun<infouserkey, uint128_t, &infouserkey::by_ckey> >, 
-            indexed_by<"user"_n, const_mem_fun<infouserkey, uint64_t, &infouserkey::by_user> > > infouserkeys_table;
+         typedef eosio::multi_index< "keytypes"_n, keytype > keytypes_table;
+         typedef eosio::multi_index< "userverifs"_n, userverif,
+            indexed_by<"ckey"_n, const_mem_fun<userverif, uint128_t, &userverif::by_ckey> >, 
+            indexed_by<"user"_n, const_mem_fun<userverif, uint64_t, &userverif::by_user> >,
+            indexed_by<"key"_n, const_mem_fun<userverif, uint64_t, &userverif::by_verification_key> > > userverifs_table;
+         typedef eosio::multi_index< "userkeys"_n, userkey,
+            indexed_by<"ckey"_n, const_mem_fun<userkey, uint128_t, &userkey::by_ckey> >, 
+            indexed_by<"user"_n, const_mem_fun<userkey, uint64_t, &userkey::by_user> > > userkeys_table;
 
    };
 

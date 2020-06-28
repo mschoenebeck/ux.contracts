@@ -7,7 +7,7 @@ ACTION info::addkeytype(const name key, std::string definition, const bool user)
 {
   require_auth(_self);
 
-  infokeytypes_table table(_self, _self.value);
+  keytypes_table table(_self, _self.value);
 
   auto itr = table.find(key.value);
   check(itr == table.end(), "key already exists");
@@ -25,12 +25,12 @@ ACTION info::adduserver(const name user, const name verification_key)
 
   check(is_account(user), "no account for specified user");
 
-  infokeytypes_table kt_table(_self, _self.value);
+  keytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(verification_key.value);
   check(kt_itr != kt_table.end(), "verification_key not permitted");
   check(!kt_itr->user, "verification_key is a user key");
 
-  infouservers_table table(_self, _self.value);
+  userverifs_table table(_self, _self.value);
   auto ckey = composite_key(user.value, verification_key.value);
   auto idx = table.get_index<"ckey"_n>();
   auto itr = idx.find(ckey);
@@ -53,11 +53,11 @@ ACTION info::setuserkey(const name user, const name key, const std::string memo)
 
   check(memo.length() <= 1024, "memo exceeds permitted length of 1024 chars");
 
-  infokeytypes_table kt_table(_self, _self.value);
+  keytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(key.value);
   check(kt_itr != kt_table.end(), "verification_key not recognised");
 
-  infouserkeys_table table(_self, _self.value);
+  userkeys_table table(_self, _self.value);
   auto ckey = composite_key(user.value, key.value);
   auto idx = table.get_index<"ckey"_n>();
   auto itr = idx.find(ckey);
@@ -82,7 +82,7 @@ ACTION info::deluserkey(const name user, const name key)
 
   check(is_account(user), "no account for specified user");
 
-  infouserkeys_table table(_self, _self.value);
+  userkeys_table table(_self, _self.value);
   auto ckey = composite_key(user.value, key.value);
   auto idx = table.get_index<"ckey"_n>();
   auto itr = idx.find(ckey);
