@@ -70,7 +70,7 @@ namespace eosiosystem {
    static constexpr int64_t  min_activated_stake   = 150'000'000'0000;
    static constexpr int64_t  ram_gift_bytes        = 1400;
    static constexpr int64_t  min_pervote_daily_pay = 100'0000;
-   static constexpr uint32_t refund_delay_sec      = 3 * seconds_per_day;
+   static constexpr uint32_t refund_delay_sec      = 1;//3 * seconds_per_day;
 
    static constexpr int64_t  inflation_precision           = 100;     // 2 decimals
    static constexpr int64_t  default_annual_rate           = 500;     // 5% annual rate
@@ -555,6 +555,7 @@ namespace eosiosystem {
          static constexpr eosio::name stake_account{"eosio.stake"_n};
          static constexpr eosio::name bpay_account{"eosio.bpay"_n};
          static constexpr eosio::name vpay_account{"eosio.vpay"_n};
+         static constexpr eosio::name upay_account{"eosio.upay"_n};
          static constexpr eosio::name names_account{"eosio.names"_n};
          static constexpr eosio::name saving_account{"eosio.saving"_n};
          static constexpr eosio::name rex_account{"eosio.rex"_n};

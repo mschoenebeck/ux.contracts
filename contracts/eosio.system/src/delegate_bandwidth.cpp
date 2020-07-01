@@ -51,36 +51,36 @@ namespace eosiosystem {
       check( quant.symbol == core_symbol(), "must buy ram with core token" );
       check( quant.amount > 0, "must purchase a positive amount" );
 
-      auto fee = quant;
-      fee.amount = ( fee.amount + 199 ) / 200; /// .5% fee (round up)
+      //auto fee = quant;
+      //fee.amount = ( fee.amount + 199 ) / 200; /// .5% fee (round up)
       // fee.amount cannot be 0 since that is only possible if quant.amount is 0 which is not allowed by the assert above.
       // If quant.amount == 1, then fee.amount == 1,
       // otherwise if quant.amount > 1, then 0 < fee.amount < quant.amount.
-      auto quant_after_fee = quant;
-      quant_after_fee.amount -= fee.amount;
+      //auto quant_after_fee = quant;
+      //quant_after_fee.amount -= fee.amount;
       // quant_after_fee.amount should be > 0 if quant.amount > 1.
       // If quant.amount == 1, then quant_after_fee.amount == 0 and the next inline transfer will fail causing the buyram action to fail.
       {
          token::transfer_action transfer_act{ token_account, { {payer, active_permission}, {ram_account, active_permission} } };
-         transfer_act.send( payer, ram_account, quant_after_fee, "buy ram" );
+         transfer_act.send( payer, ram_account, quant, "buy ram" );
       }
-      if ( fee.amount > 0 ) {
+      /*if ( fee.amount > 0 ) {
          token::transfer_action transfer_act{ token_account, { {payer, active_permission} } };
          transfer_act.send( payer, ramfee_account, fee, "ram fee" );
          channel_to_rex( ramfee_account, fee );
-      }
+      }*/
 
       int64_t bytes_out;
 
       const auto& market = _rammarket.get(ramcore_symbol.raw(), "ram market does not exist");
       _rammarket.modify( market, same_payer, [&]( auto& es ) {
-         bytes_out = es.direct_convert( quant_after_fee,  ram_symbol ).amount;
+         bytes_out = es.direct_convert( quant,  ram_symbol ).amount;
       });
 
       check( bytes_out > 0, "must reserve a positive amount" );
 
       _gstate.total_ram_bytes_reserved += uint64_t(bytes_out);
-      _gstate.total_ram_stake          += quant_after_fee.amount;
+      _gstate.total_ram_stake          += quant.amount;
 
       user_resources_table  userres( get_self(), receiver.value );
       auto res_itr = userres.find( receiver.value );
@@ -152,13 +152,13 @@ namespace eosiosystem {
          token::transfer_action transfer_act{ token_account, { {ram_account, active_permission}, {account, active_permission} } };
          transfer_act.send( ram_account, account, asset(tokens_out), "sell ram" );
       }
-      auto fee = ( tokens_out.amount + 199 ) / 200; /// .5% fee (round up)
+      //auto fee = ( tokens_out.amount + 199 ) / 200; /// .5% fee (round up)
       // since tokens_out.amount was asserted to be at least 2 earlier, fee.amount < tokens_out.amount
-      if ( fee > 0 ) {
+/*      if ( fee > 0 ) {
          token::transfer_action transfer_act{ token_account, { {account, active_permission} } };
          transfer_act.send( account, ramfee_account, asset(fee, core_symbol()), "sell ram fee" );
          channel_to_rex( ramfee_account, asset(fee, core_symbol() ));
-      }
+      }*/
    }
 
    void validate_b1_vesting( int64_t stake ) {
