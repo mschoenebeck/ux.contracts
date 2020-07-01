@@ -32,13 +32,14 @@ namespace eosio {
          ACTION addkeytype(const name key, std::string definition, const bool user);
 
          /**
-          * Removes a key/verfication definition, called by KYC provider
+          * Updates a key/verfication definition, called by KYC provider
           *
           * @param key - the name of the verification or user info key
+          * @param user -  whether the key refers to user info (true) or verification key (false)
           *
           * @pre key must be present in keytype table
           */
-         //ACTION delkeytype(const name key);
+         ACTION updkeytype(const name key, std::string definition, const bool user);
 
          /**
           * Adds a user verfication record, called by KYC provider
@@ -58,7 +59,7 @@ namespace eosio {
           *
           * @pre matching record must be present in userverif table
           */
-         // ACTION deluserver(const name user, const name verification_key);
+         ACTION deluserver(const name user, const name verification_key);
 
          /**
           * Allows a user to make a key/verfication record available, called by KYC user

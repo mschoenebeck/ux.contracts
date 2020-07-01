@@ -19,6 +19,21 @@ ACTION info::addkeytype(const name key, std::string definition, const bool user)
   });
 }
 
+ACTION info::updkeytype(const name key, std::string definition, const bool user)
+{
+  require_auth(_self);
+
+  keytypes_table table(_self, _self.value);
+
+  auto itr = table.find(key.value);
+  check(itr != table.end(), "key not present");
+
+  table.modify(*itr, _self, [&]( auto& t) {
+    t.definition = definition;
+    t.user = user;
+  });
+}
+
 ACTION info::adduserver(const name user, const name verification_key)
 {
   require_auth(_self);
@@ -43,6 +58,27 @@ ACTION info::adduserver(const name user, const name verification_key)
     t.verification_key = verification_key;
     t.timestamp = current_time_point();
   });
+}
+
+ACTION info::deluserver(const name user, const name verification_key)
+{
+  require_auth(_self);
+
+  check(is_account(user), "no account for specified user");
+
+  keytypes_table kt_table(_self, _self.value);
+  auto kt_itr = kt_table.find(verification_key.value);
+  check(kt_itr != kt_table.end(), "verification_key not permitted");
+  check(!kt_itr->user, "verification_key is a user key");
+
+  userverifs_table table(_self, _self.value);
+  auto ckey = composite_key(user.value, verification_key.value);
+  auto idx = table.get_index<"ckey"_n>();
+  auto itr = idx.find(ckey);
+
+  check(itr != idx.end(), "user verification not present");
+
+  idx.erase(itr);
 }
 
 ACTION info::setuserkey(const name user, const name key, const std::string memo)
