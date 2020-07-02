@@ -21,45 +21,67 @@ namespace eosio {
          using contract::contract;
 
          /**
-          * Adds a key/verfication type definition, called by KYC provider
+          * Adds a kyc account to the kycaccounts table, called by eosio
+          *
+          * @param account - the name of the account to add
+          *
+          * @pre account must not already exist in kycaccounts table
+          */
+         ACTION addkycacc(const name account);
+
+         /**
+          * Deletes a kyc account from the kycaccounts table, called by eosio
+          *
+          * @param account - the name of the account to delete
+          *
+          * @pre account must exist in kycaccounts table
+          */
+         ACTION delkycacc(const name account);
+
+         /**
+          * Adds a key/verfication type definition, called by eosio
           *
           * @param key - the name of the verification or user info key
           * @param definition - a text string containing what the key refers to
           * @param user - whether the key refers to user info (true) or verification key (false)
           *
-          * @pre key must not already exist in keytype table
+          * @pre key must not already exist in keytypes table
           */
          ACTION addkeytype(const name key, std::string definition, const bool user);
 
          /**
-          * Updates a key/verfication definition, called by KYC provider
+          * Updates a key/verfication definition, called by eosio
           *
           * @param key - the name of the verification or user info key
           * @param user -  whether the key refers to user info (true) or verification key (false)
           *
-          * @pre key must be present in keytype table
+          * @pre key must be present in keytypes table
           */
          ACTION updkeytype(const name key, std::string definition, const bool user);
 
          /**
           * Adds a user verfication record, called by KYC provider
           *
+          * @param kyc_account - the name of the kyc account
           * @param user - the name of the user account
           * @param verification_type - the name of the verification key
           *
-          * @pre verification_key must be a key present in keytype table
+          * @pre kyc_account must be a key present in kycaccounts table
+          * @pre verification_key must be a key present in keytypes table
           */
-         ACTION adduserver(const name user, const name verification_key);
+         ACTION adduserver(const name kyc_account, const name user, const name verification_key);
 
          /**
           * Removes a user verification, called by KYC provider
           *
+          * @param kyc_account - the name of the kyc account
           * @param user - the name of the user account
           * @param verification_key - the name of the verification key
           *
-          * @pre matching record must be present in userverif table
+          * @pre kyc_account must be a key present in kycaccounts table
+          * @pre matching record must be present in userverifs table
           */
-         ACTION deluserver(const name user, const name verification_key);
+         ACTION deluserver(const name kyc_account, const name user, const name verification_key);
 
          /**
           * Allows a user to make a key/verfication record available, called by KYC user
@@ -68,7 +90,7 @@ namespace eosio {
           * @param key - the name of the verification or user key
           * @param memo - a text string of up to 1024 characters
           *
-          * @pre key must be a key present in keytype table
+          * @pre key must be a key present in keytypes table
           * @pre memo length must not exceed 1024 characters
           */
          ACTION setuserkey(const name user, const name key, const std::string memo);
@@ -79,7 +101,7 @@ namespace eosio {
           * @param user - the name of the user account
           * @param key - the name of the verification key
           *
-          * @pre record must be present in userkey table
+          * @pre record must be present in userkeys table
           */
          ACTION deluserkey(const name user, const name key);
 
@@ -89,6 +111,15 @@ namespace eosio {
          }
 
       private:
+
+         /**
+          * stores the kyc source accounts
+          */
+         struct [[eosio::table]] kycaccount {
+            name          account;
+
+            uint64_t primary_key() const { return account.value; }
+         };
 
          /**
           * stores the verification definitions
@@ -131,6 +162,7 @@ namespace eosio {
             uint64_t by_key() const {return key.value; }
          };
 
+         typedef eosio::multi_index< "kycaccounts"_n, kycaccount > kycaccounts_table;
          typedef eosio::multi_index< "keytypes"_n, keytype > keytypes_table;
          typedef eosio::multi_index< "userverifs"_n, userverif,
             indexed_by<"ckey"_n, const_mem_fun<userverif, uint128_t, &userverif::by_ckey> >, 

@@ -3,9 +3,36 @@
 
 namespace eosio {
 
+ACTION info::addkycacc(const name account)
+{
+  require_auth("eosio"_n);
+
+  kycaccounts_table table(_self, _self.value);
+
+  auto itr = table.find(account.value);
+  check(itr == table.end(), "account already exists");
+
+  table.emplace(_self, [&](auto& t) {
+    t.account = account;
+  });
+
+}
+
+ACTION info::delkycacc(const name account)
+{
+  require_auth("eosio"_n);
+
+  kycaccounts_table table(_self, _self.value);
+
+  auto itr = table.find(account.value);
+  check(itr != table.end(), "kyc account not present");
+
+  table.erase(itr);
+}
+
 ACTION info::addkeytype(const name key, std::string definition, const bool user)
 {
-  require_auth(_self);
+  require_auth("eosio"_n);
 
   keytypes_table table(_self, _self.value);
 
@@ -21,7 +48,7 @@ ACTION info::addkeytype(const name key, std::string definition, const bool user)
 
 ACTION info::updkeytype(const name key, std::string definition, const bool user)
 {
-  require_auth(_self);
+  require_auth("eosio"_n);
 
   keytypes_table table(_self, _self.value);
 
@@ -34,13 +61,18 @@ ACTION info::updkeytype(const name key, std::string definition, const bool user)
   });
 }
 
-ACTION info::adduserver(const name user, const name verification_key)
+ACTION info::adduserver(const name kyc_account, const name user, const name verification_key)
 {
-  require_auth(_self);
+  require_auth(kyc_account);
+
+  kycaccounts_table katable(_self, _self.value);
+
+  auto ka_itr = katable.find(kyc_account.value);
+  check(ka_itr != katable.end(), "kyc account not present");
 
   check(is_account(user), "no account for specified user");
 
-  keytypes_table kt_table(_self, _self.value);
+  keytypes_table kt_table(_self, kyc_account.value); // scope by kyc_account
   auto kt_itr = kt_table.find(verification_key.value);
   check(kt_itr != kt_table.end(), "verification_key not permitted");
   check(!kt_itr->user, "verification_key is a user key");
@@ -60,13 +92,18 @@ ACTION info::adduserver(const name user, const name verification_key)
   });
 }
 
-ACTION info::deluserver(const name user, const name verification_key)
+ACTION info::deluserver(const name kyc_account, const name user, const name verification_key)
 {
-  require_auth(_self);
+  require_auth(kyc_account);
+
+  kycaccounts_table katable(_self, _self.value);
+
+  auto ka_itr = katable.find(kyc_account.value);
+  check(ka_itr != katable.end(), "kyc account not present");
 
   check(is_account(user), "no account for specified user");
 
-  keytypes_table kt_table(_self, _self.value);
+  keytypes_table kt_table(_self, kyc_account.value); // scope by kyc_account
   auto kt_itr = kt_table.find(verification_key.value);
   check(kt_itr != kt_table.end(), "verification_key not permitted");
   check(!kt_itr->user, "verification_key is a user key");
