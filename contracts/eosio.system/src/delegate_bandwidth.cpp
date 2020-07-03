@@ -389,6 +389,31 @@ namespace eosiosystem {
                                        const asset& unstake_net_quantity, const asset& unstake_cpu_quantity )
    {
       asset zero_asset( 0, core_symbol() );
+
+      const auto& prod = _producers.get( from.value );
+
+      if( prod.active()){
+         //10 million UTX self-staking requirement
+         del_bandwidth_table     del_tbl( get_self(), from.value );
+         auto itr = del_tbl.find( from.value );
+         check( itr != del_tbl.end(), "producer must maintain 10 million UTX tokens staked to self while registered as a producer. Please unregister first." );
+
+         uint64_t stake_change = unstake_net_quantity.amount + unstake_cpu_quantity.amount;
+         uint64_t total_staked = itr->net_weight.amount + itr->cpu_weight.amount;
+
+/*         eosio::print("unstake_net_quantity", unstake_net_quantity, "\n");
+         eosio::print("unstake_cpu_quantity", unstake_cpu_quantity, "\n");
+         eosio::print("net_weight", itr->net_weight.amount, "\n");
+         eosio::print("cpu_weight", itr->cpu_weight.amount, "\n");
+         eosio::print("stake_change", stake_change, "\n");
+         eosio::print("total_staked", total_staked, "\n");*/
+      
+         check(total_staked - stake_change >= 100000000000, "producer must maintain 10 million UTX tokens staked to self while registered as a producer. Please unregister first." );
+         /////////
+      }
+
+      //eosio::print("done \n");
+
       check( unstake_cpu_quantity >= zero_asset, "must unstake a positive amount" );
       check( unstake_net_quantity >= zero_asset, "must unstake a positive amount" );
       check( unstake_cpu_quantity.amount + unstake_net_quantity.amount > 0, "must unstake a positive amount" );

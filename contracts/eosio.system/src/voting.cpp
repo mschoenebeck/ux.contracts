@@ -25,6 +25,17 @@ namespace eosiosystem {
    using eosio::singleton;
 
    void system_contract::register_producer( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location ) {
+      
+      //10 million UTX self-staking requirement
+      del_bandwidth_table     del_tbl( get_self(), producer.value );
+      auto itr = del_tbl.find( producer.value );
+      check( itr != del_tbl.end(), "producer must stake 10 million UTX tokens to self in order to call regproducer" );
+
+      asset total_staked = itr->net_weight + itr->cpu_weight;
+
+      check(total_staked.amount >= 100000000000, "producer must stake 10 million UTX tokens to self in order to call regproducer");
+      /////////
+
       auto prod = _producers.find( producer.value );
       const auto ct = current_time_point();
 
@@ -86,7 +97,7 @@ namespace eosiosystem {
    void system_contract::regproducer2( const name& producer, const eosio::block_signing_authority& producer_authority, const std::string& url, uint16_t location ) {
       require_auth( producer );
       check( url.size() < 512, "url too long" );
-
+      
       std::visit( [&](auto&& auth ) {
          check( auth.is_valid(), "invalid producer authority" );
       }, producer_authority );
