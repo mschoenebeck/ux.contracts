@@ -72,19 +72,19 @@ ACTION info::adduserver(const name kyc_account, const name user, const name veri
 
   check(is_account(user), "no account for specified user");
 
-  keytypes_table kt_table(_self, kyc_account.value); // scope by kyc_account
+  keytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(verification_key.value);
-  check(kt_itr != kt_table.end(), "verification_key not permitted");
+  check(kt_itr != kt_table.end(), "verification_key not recognized");
   check(!kt_itr->user, "verification_key is a user key");
 
-  userverifs_table table(_self, _self.value);
+  userverifs_table table(_self, kyc_account.value); // scope by kyc_account
   auto ckey = composite_key(user.value, verification_key.value);
   auto idx = table.get_index<"ckey"_n>();
   auto itr = idx.find(ckey);
 
   check(itr == idx.end(), "user verification already present");
 
-  table.emplace(user, [&](auto& t) {
+  table.emplace(kyc_account, [&](auto& t) {
     t.id = table.available_primary_key();
     t.user = user;
     t.verification_key = verification_key;
@@ -103,12 +103,12 @@ ACTION info::deluserver(const name kyc_account, const name user, const name veri
 
   check(is_account(user), "no account for specified user");
 
-  keytypes_table kt_table(_self, kyc_account.value); // scope by kyc_account
+  keytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(verification_key.value);
-  check(kt_itr != kt_table.end(), "verification_key not permitted");
+  check(kt_itr != kt_table.end(), "verification_key not recognized");
   check(!kt_itr->user, "verification_key is a user key");
 
-  userverifs_table table(_self, _self.value);
+  userverifs_table table(_self, kyc_account.value); // scope by kyc_account
   auto ckey = composite_key(user.value, verification_key.value);
   auto idx = table.get_index<"ckey"_n>();
   auto itr = idx.find(ckey);
@@ -128,7 +128,7 @@ ACTION info::setuserkey(const name user, const name key, const std::string memo)
 
   keytypes_table kt_table(_self, _self.value);
   auto kt_itr = kt_table.find(key.value);
-  check(kt_itr != kt_table.end(), "verification_key not recognised");
+  check(kt_itr != kt_table.end(), "key not recognised");
 
   userkeys_table table(_self, _self.value);
   auto ckey = composite_key(user.value, key.value);
