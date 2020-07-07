@@ -1,0 +1,122 @@
+<h1 class="contract">addkycacc</h1>
+
+---
+spec_version: "0.1.0"
+title: Add KYC Account
+summary: 'Add {{nowrap account}} to approved KYC accounts list'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+eosio agrees to add {{nowrap account}} to the approved KYC accounts list.
+
+RAM will be deducted from the contract account's resources to create the record.
+
+<h1 class="contract">delkycacc</h1>
+
+---
+spec_version: "0.1.0"
+title: Delete KYC Account
+summary: 'Delete {{nowrap account}} from approved KYC accounts list'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+eosio agrees to delete {{nowrap account}} from the approved KYC accounts list.
+
+RAM no longer required for the record will be refunded to the contract account.
+
+<h1 class="contract">addkeytype</h1>
+
+---
+spec_version: "0.1.0"
+title: Add Key Type Definition
+summary: 'Add {{nowrap key}} type definition to the Key Types list'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+{{#if user}}
+eosio agrees to add {{nowrap key}} to the list of user key definitions.
+{{else}}
+eosio agrees to add {{nowrap key}} to the list of verification key definitions.
+{{/if}}
+
+The definition will be: {{definition}}
+
+RAM will be deducted from the contract account's resources to create the necessary records.
+
+<h1 class="contract">updkeytype</h1>
+
+---
+spec_version: "0.1.0"
+title: Update Key Type Definition
+summary: 'Update {{nowrap key}} type definition in the Key Types list'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+{{#if user}}
+eosio agrees to update {{nowrap key}} in the list of user key definitions.
+{{else}}
+eosio agrees to update {{nowrap key}} in the list of verification key definitions.
+{{/if}}
+
+The new definition will be: {{definition}}
+
+RAM may be deducted or refunded to the contract account's resources depending on whether more or less is required to update the record.
+
+<h1 class="contract">adduserver</h1>
+
+---
+spec_version: "0.1.0"
+title: Add User Verification
+summary: 'Mark {{nowrap verification_key}} as verified for user {{nowrap user}}'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+{{kyc_account}} verifies that user {{nowrap user}} has provided acceptable evidence of {{nowrap verification_key}}.
+
+RAM will be deducted from {{nowrap kyc_account}}'s resources to create the record.
+
+<h1 class="contract">deluserver</h1>
+
+---
+spec_version: "0.1.0"
+title: Delete User Verification
+summary: 'Unmark {{nowrap verification_key}} as verified for user {{nowrap user}}'
+icon: @ICON_BASE_URL@/@TRANSFER_ICON_URI@
+---
+
+{{kyc_account}} withdraws verification that user {{nowrap user}} has provided acceptable evidence of {{nowrap verification_key}}.
+
+RAM no longer required for the record will be refunded to {{nowrap kyc_account}}.
+
+<h1 class="contract">setuserkey</h1>
+
+---
+spec_version: "0.1.0"
+title: Set User Key
+summary: 'Set key {{nowrap key}} for user {{nowrap user}}'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+{{nowrap user}} agrees to publish the following data with respect to this account.
+
+Key: {{key}}
+
+{{#if memo}}
+Memo: {{memo}}
+{{/if}}
+
+
+RAM will be deducted from {{nowrap user}}'s resources to create the record.
+
+<h1 class="contract">deluserkey</h1>
+
+---
+spec_version: "0.1.0"
+title: Delete User Key
+summary: 'Delete key {{nowrap key}} for user {{nowrap user}}'
+icon: @ICON_BASE_URL@/@TOKEN_ICON_URI@
+---
+
+{{nowrap user}} agrees to remove data for key {{nowrap key}} with respect to this account.
+
+RAM no longer required for the record will be refunded to {{nowrap user}}.
