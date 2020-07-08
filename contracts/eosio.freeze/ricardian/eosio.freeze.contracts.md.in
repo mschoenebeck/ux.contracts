@@ -1,0 +1,14 @@
+<h1 class="contract">freezeacc</h1>
+
+---
+spec_version: "0.1.0"
+title: Freeze Account
+summary: 'Add {{nowrap account}} to the list of immutable accounts.'
+icon: @ICON_BASE_URL@/@ACCOUNT_ICON_URI@
+---
+
+eosio agrees to add {{nowrap account}} to the list of immutable accounts.
+
+Any further setcode, setabi, updateauth, deleteauth, linkauth, unlinkauth actions targeting an immutable account will fail.
+
+<h1 class="contract">freezeacc</h1>
