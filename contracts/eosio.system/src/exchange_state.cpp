@@ -8,7 +8,7 @@ namespace eosiosystem {
 
    using eosio::check;
 
-   asset exchange_state::convert_to_exchange( connector& reserve, const asset& payment )
+   /*asset exchange_state::convert_to_exchange( connector& reserve, const asset& payment )
    {
       const double S0 = supply.amount;
       const double R0 = reserve.balance.amount;
@@ -76,7 +76,7 @@ namespace eosiosystem {
          check( false, "invalid conversion" );
       }
       return out;
-   }
+   }*/
 
    int64_t exchange_state::get_bancor_output( int64_t inp_reserve,
                                               int64_t out_reserve,

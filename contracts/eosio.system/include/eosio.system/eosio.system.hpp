@@ -69,7 +69,7 @@ namespace eosiosystem {
 
    static time_point  min_activated_date   = time_point(eosio::milliseconds(1593962677000));
    static constexpr int64_t  min_activated_stake   = 150'000'000'0000;
-   static constexpr int64_t  ram_gift_bytes        = 1400;
+   static constexpr int64_t  ram_gift_bytes        = 0;
    static constexpr int64_t  min_pervote_daily_pay = 100'0000;
    static constexpr uint32_t refund_delay_sec      = 1;//3 * seconds_per_day;
 
@@ -561,7 +561,7 @@ namespace eosiosystem {
          static constexpr eosio::name saving_account{"eosio.saving"_n};
          static constexpr eosio::name rex_account{"eosio.rex"_n};
          static constexpr eosio::name null_account{"eosio.null"_n};
-         static constexpr symbol ramcore_symbol = symbol(symbol_code("RAMCORE"), 4);
+         static constexpr symbol ramcore_symbol = symbol(symbol_code("UTXRAM"), 4);
          static constexpr symbol ram_symbol     = symbol(symbol_code("RAM"), 0);
          static constexpr symbol rex_symbol     = symbol(symbol_code("REX"), 4);
 
@@ -1223,7 +1223,7 @@ namespace eosiosystem {
             check(itr != rm.end(), "system contract must first be initialized");
             return itr->quote.balance.symbol;
          }
-
+         
          //defined in eosio.system.cpp
          static eosio_global_state get_default_parameters();
          static eosio_global_state4 get_default_inflation_parameters();

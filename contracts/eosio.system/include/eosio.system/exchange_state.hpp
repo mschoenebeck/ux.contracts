@@ -33,12 +33,12 @@ namespace eosiosystem {
       connector quote;
 
       uint64_t primary_key()const { return supply.symbol.raw(); }
-
+/*
       asset convert_to_exchange( connector& reserve, const asset& payment );
       asset convert_from_exchange( connector& reserve, const asset& tokens );
       asset convert( const asset& from, const symbol& to );
       asset direct_convert( const asset& from, const symbol& to );
-
+*/
       static int64_t get_bancor_output( int64_t inp_reserve,
                                         int64_t out_reserve,
                                         int64_t inp );

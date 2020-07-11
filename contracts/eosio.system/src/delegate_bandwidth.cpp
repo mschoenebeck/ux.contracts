@@ -26,12 +26,20 @@ namespace eosiosystem {
     *  This action will buy an exact amount of ram and bill the payer the current market price.
     */
    void system_contract::buyrambytes( const name& payer, const name& receiver, uint32_t bytes ) {
-      auto itr = _rammarket.find(ramcore_symbol.raw());
+
+      eosio::print(bytes, "\n");
+
+      check(bytes>0, "must buy positive quantity");
+      check(bytes % 1024 == 0, "must buy in exact increments of one kilobyte (1024 bytes)");
+     // ramcore_symbol
+      buyram( payer, receiver, asset{ (int64_t)(bytes/1024*10000), ramcore_symbol} );
+
+/*      auto itr = _rammarket.find(ramcore_symbol.raw());
       const int64_t ram_reserve   = itr->base.balance.amount;
       const int64_t eos_reserve   = itr->quote.balance.amount;
       const int64_t cost          = exchange_state::get_bancor_input( ram_reserve, eos_reserve, bytes );
       const int64_t cost_plus_fee = cost / double(0.995);
-      buyram( payer, receiver, asset{ cost_plus_fee, core_symbol() } );
+      buyram( payer, receiver, asset{ cost_plus_fee, core_symbol() } );*/
    }
 
 
@@ -48,7 +56,8 @@ namespace eosiosystem {
       require_auth( payer );
       update_ram_supply();
 
-      check( quant.symbol == core_symbol(), "must buy ram with core token" );
+      check( quant.amount % 10000 == 0, "can only buy in exact increments of 1.0000 UTXRAM");
+      check( quant.symbol == ramcore_symbol, "must buy ram with ramcore token" );
       check( quant.amount > 0, "must purchase a positive amount" );
 
       //auto fee = quant;
@@ -74,8 +83,10 @@ namespace eosiosystem {
 
       const auto& market = _rammarket.get(ramcore_symbol.raw(), "ram market does not exist");
       _rammarket.modify( market, same_payer, [&]( auto& es ) {
-         bytes_out = es.direct_convert( quant,  ram_symbol ).amount;
+         bytes_out = quant.amount / 10000 * 1024; //es.direct_convert( quant,  ram_symbol ).amount;
       });
+
+      //print("bytes_out:", bytes_out, "\n");
 
       check( bytes_out > 0, "must reserve a positive amount" );
 
@@ -116,6 +127,7 @@ namespace eosiosystem {
       update_ram_supply();
 
       check( bytes > 0, "cannot sell negative byte" );
+      check( bytes % 1024 == 0, "can only sell in exact increments of one kilobyte (1024 bytes)");
 
       user_resources_table  userres( get_self(), account.value );
       auto res_itr = userres.find( account.value );
@@ -126,8 +138,10 @@ namespace eosiosystem {
       auto itr = _rammarket.find(ramcore_symbol.raw());
       _rammarket.modify( itr, same_payer, [&]( auto& es ) {
          /// the cast to int64_t of bytes is safe because we certify bytes is <= quota which is limited by prior purchases
-         tokens_out = es.direct_convert( asset(bytes, ram_symbol), core_symbol());
+         tokens_out = asset( bytes / 1024 * 10000, ramcore_symbol); //es.direct_convert( asset(bytes, ram_symbol), ramcore_symbol);
       });
+
+      //print("tokens_out:", tokens_out, "\n");
 
       check( tokens_out.amount > 1, "token amount received from selling ram is too low" );
 
