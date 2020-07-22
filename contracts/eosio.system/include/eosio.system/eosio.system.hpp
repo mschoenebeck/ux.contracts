@@ -66,8 +66,8 @@ namespace eosiosystem {
    static constexpr int64_t  useconds_per_day      = int64_t(seconds_per_day) * 1000'000ll;
    static constexpr int64_t  useconds_per_hour     = int64_t(seconds_per_hour) * 1000'000ll;
    static constexpr uint32_t blocks_per_day        = 2 * seconds_per_day; // half seconds per day
-
-   static time_point  min_activated_date   = time_point(eosio::milliseconds(1));
+                                                                            
+   static time_point  min_activated_date   = time_point(eosio::milliseconds(1593962677000));
    static constexpr int64_t  min_activated_stake   = 150'000'000'0000;
    static constexpr int64_t  ram_gift_bytes        = 0;
    static constexpr int64_t  min_pervote_daily_pay = 100'0000;
