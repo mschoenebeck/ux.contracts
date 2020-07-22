@@ -82,6 +82,7 @@ namespace eosiosystem {
       int64_t bytes_out;
 
       const auto& market = _rammarket.get(ramcore_symbol.raw(), "ram market does not exist");
+      
       _rammarket.modify( market, same_payer, [&]( auto& es ) {
          bytes_out = quant.amount / 10000 * 1024; //es.direct_convert( quant,  ram_symbol ).amount;
       });
@@ -103,6 +104,7 @@ namespace eosiosystem {
                res.ram_bytes = bytes_out;
             });
       } else {
+
          userres.modify( res_itr, receiver, [&]( auto& res ) {
                res.ram_bytes += bytes_out;
             });
@@ -110,6 +112,7 @@ namespace eosiosystem {
 
       auto voter_itr = _voters.find( res_itr->owner.value );
       if( voter_itr == _voters.end() || !has_field( voter_itr->flags1, voter_info::flags1_fields::ram_managed ) ) {
+
          int64_t ram_bytes, net, cpu;
          get_resource_limits( res_itr->owner, ram_bytes, net, cpu );
          set_resource_limits( res_itr->owner, res_itr->ram_bytes + ram_gift_bytes, net, cpu );
