@@ -10,7 +10,8 @@ namespace eosiosystem {
 
    void system_contract::deposit( const name& owner, const asset& amount )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+ /*     require_auth( owner );
 
       check( amount.symbol == core_symbol(), "must deposit core token" );
       check( 0 < amount.amount, "must deposit a positive amount" );
@@ -19,12 +20,13 @@ namespace eosiosystem {
          token::transfer_action transfer_act{ token_account, { owner, active_permission } };
          transfer_act.send( owner, rex_account, amount, "deposit to REX fund" );
       }
-      transfer_to_fund( owner, amount );
+      transfer_to_fund( owner, amount );*/
    }
 
    void system_contract::withdraw( const name& owner, const asset& amount )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+/*      require_auth( owner );
 
       check( amount.symbol == core_symbol(), "must withdraw core token" );
       check( 0 < amount.amount, "must withdraw a positive amount" );
@@ -34,12 +36,13 @@ namespace eosiosystem {
       {
          token::transfer_action transfer_act{ token_account, { rex_account, active_permission } };
          transfer_act.send( rex_account, owner, amount, "withdraw from REX fund" );
-      }
+      }*/
    }
 
    void system_contract::buyrex( const name& from, const asset& amount )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       check( amount.symbol == core_symbol(), "asset must be core token" );
       check( 0 < amount.amount, "must use positive amount" );
@@ -51,12 +54,13 @@ namespace eosiosystem {
       update_rex_account( from, asset( 0, core_symbol() ), delta_rex_stake );
       // dummy action added so that amount of REX tokens purchased shows up in action trace
       rex_results::buyresult_action buyrex_act( rex_account, std::vector<eosio::permission_level>{ } );
-      buyrex_act.send( rex_received );
+      buyrex_act.send( rex_received );*/
    }
 
    void system_contract::unstaketorex( const name& owner, const name& receiver, const asset& from_net, const asset& from_cpu )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+      /*require_auth( owner );
 
       check( from_net.symbol == core_symbol() && from_cpu.symbol == core_symbol(), "asset must be core token" );
       check( (0 <= from_net.amount) && (0 <= from_cpu.amount) && (0 < from_net.amount || 0 < from_cpu.amount),
@@ -91,12 +95,13 @@ namespace eosiosystem {
       update_rex_account( owner, asset( 0, core_symbol() ), asset( 0, core_symbol() ), true );
       // dummy action added so that amount of REX tokens purchased shows up in action trace
       rex_results::buyresult_action buyrex_act( rex_account, std::vector<eosio::permission_level>{ } );
-      buyrex_act.send( rex_received );
+      buyrex_act.send( rex_received );*/
    }
 
    void system_contract::sellrex( const name& from, const asset& rex )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+      /*require_auth( from );
 
       runrex(2);
 
@@ -115,10 +120,7 @@ namespace eosiosystem {
          if ( from == "b1"_n ) {
             check( false, "b1 sellrex orders should not be queued" );
          }
-         /**
-          * REX order couldn't be filled and is added to queue.
-          * If account already has an open order, requested rex is added to existing order.
-          */
+
          auto oitr = _rexorders.find( from.value );
          if ( oitr == _rexorders.end() ) {
             oitr = _rexorders.emplace( from, [&]( auto& order ) {
@@ -141,71 +143,79 @@ namespace eosiosystem {
       if ( current_order.success ) {
          rex_results::sellresult_action sellrex_act( rex_account, std::vector<eosio::permission_level>{ } );
          sellrex_act.send( current_order.proceeds );
-      }
+      }*/
    }
 
    void system_contract::cnclrexorder( const name& owner )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+/*      require_auth( owner );
 
       auto itr = _rexorders.require_find( owner.value, "no sellrex order is scheduled" );
       check( itr->is_open, "sellrex order has been filled and cannot be canceled" );
-      _rexorders.erase( itr );
+      _rexorders.erase( itr );*/
    }
 
    void system_contract::rentcpu( const name& from, const name& receiver, const asset& loan_payment, const asset& loan_fund )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       rex_cpu_loan_table cpu_loans( get_self(), get_self().value );
       int64_t rented_tokens = rent_rex( cpu_loans, from, receiver, loan_payment, loan_fund );
-      update_resource_limits( from, receiver, 0, rented_tokens );
+      update_resource_limits( from, receiver, 0, rented_tokens );*/
    }
 
    void system_contract::rentnet( const name& from, const name& receiver, const asset& loan_payment, const asset& loan_fund )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       rex_net_loan_table net_loans( get_self(), get_self().value );
       int64_t rented_tokens = rent_rex( net_loans, from, receiver, loan_payment, loan_fund );
-      update_resource_limits( from, receiver, rented_tokens, 0 );
+      update_resource_limits( from, receiver, rented_tokens, 0 );*/
    }
 
    void system_contract::fundcpuloan( const name& from, uint64_t loan_num, const asset& payment )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       rex_cpu_loan_table cpu_loans( get_self(), get_self().value );
-      fund_rex_loan( cpu_loans, from, loan_num, payment  );
+      fund_rex_loan( cpu_loans, from, loan_num, payment  );*/
    }
 
    void system_contract::fundnetloan( const name& from, uint64_t loan_num, const asset& payment )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       rex_net_loan_table net_loans( get_self(), get_self().value );
-      fund_rex_loan( net_loans, from, loan_num, payment );
+      fund_rex_loan( net_loans, from, loan_num, payment );*/
    }
 
    void system_contract::defcpuloan( const name& from, uint64_t loan_num, const asset& amount )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       rex_cpu_loan_table cpu_loans( get_self(), get_self().value );
-      defund_rex_loan( cpu_loans, from, loan_num, amount );
+      defund_rex_loan( cpu_loans, from, loan_num, amount );*/
    }
 
    void system_contract::defnetloan( const name& from, uint64_t loan_num, const asset& amount )
    {
-      require_auth( from );
+      check(false, "REX disabled");
+/*      require_auth( from );
 
       rex_net_loan_table net_loans( get_self(), get_self().value );
-      defund_rex_loan( net_loans, from, loan_num, amount );
+      defund_rex_loan( net_loans, from, loan_num, amount );*/
    }
 
    void system_contract::updaterex( const name& owner )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+   /*   require_auth( owner );
 
       runrex(2);
 
@@ -226,42 +236,48 @@ namespace eosiosystem {
       });
 
       update_rex_account( owner, asset( 0, core_symbol() ), current_stake - init_stake, true );
-      process_rex_maturities( itr );
+      process_rex_maturities( itr );*/
    }
 
    void system_contract::setrex( const asset& balance )
    {
-      require_auth( "eosio"_n );
+      check(false, "REX disabled");
+   /*   require_auth( "eosio"_n );
 
       check( balance.amount > 0, "balance must be set to have a positive amount" );
       check( balance.symbol == core_symbol(), "balance symbol must be core symbol" );
       check( rex_system_initialized(), "rex system is not initialized" );
       _rexpool.modify( _rexpool.begin(), same_payer, [&]( auto& pool ) {
          pool.total_rent = balance;
-      });
+      });*/
    }
 
    void system_contract::rexexec( const name& user, uint16_t max )
    {
-      require_auth( user );
+      check(false, "REX disabled");
+   /*   require_auth( user );
 
-      runrex( max );
+      runrex( max );*/
    }
 
    void system_contract::consolidate( const name& owner )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+
+   /*   require_auth( owner );
 
       runrex(2);
 
       auto bitr = _rexbalance.require_find( owner.value, "account has no REX balance" );
       asset rex_in_sell_order = update_rex_account( owner, asset( 0, core_symbol() ), asset( 0, core_symbol() ) );
-      consolidate_rex_balance( bitr, rex_in_sell_order );
+      consolidate_rex_balance( bitr, rex_in_sell_order );*/
    }
 
    void system_contract::mvtosavings( const name& owner, const asset& rex )
    {
-      require_auth( owner );
+
+      check(false, "REX disabled");
+   /*   require_auth( owner );
 
       runrex(2);
 
@@ -290,12 +306,14 @@ namespace eosiosystem {
          }
          check( moved_rex == rex.amount, "programmer error in mvtosavings" );
       });
-      put_rex_savings( bitr, rex_in_savings + rex.amount );
+      put_rex_savings( bitr, rex_in_savings + rex.amount );*/
    }
 
    void system_contract::mvfrsavings( const name& owner, const asset& rex )
    {
-      require_auth( owner );
+
+      check(false, "REX disabled");
+   /*   require_auth( owner );
 
       runrex(2);
 
@@ -313,12 +331,14 @@ namespace eosiosystem {
          }
       });
       put_rex_savings( bitr, rex_in_savings - rex.amount );
-      update_rex_account( owner, asset( 0, core_symbol() ), asset( 0, core_symbol() ) );
+      update_rex_account( owner, asset( 0, core_symbol() ), asset( 0, core_symbol() ) );*/
    }
 
    void system_contract::closerex( const name& owner )
    {
-      require_auth( owner );
+      check(false, "REX disabled");
+
+      /*require_auth( owner );
 
       if ( rex_system_initialized() )
          runrex(2);
@@ -350,7 +370,7 @@ namespace eosiosystem {
             check( rex_itr->rex_balance.amount == 0, "account has remaining REX balance, must sell first");
             _rexbalance.erase( rex_itr );
          }
-      }
+      }*/
    }
 
    /**
