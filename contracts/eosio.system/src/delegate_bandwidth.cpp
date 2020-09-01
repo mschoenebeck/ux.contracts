@@ -407,9 +407,9 @@ namespace eosiosystem {
    {
       asset zero_asset( 0, core_symbol() );
 
-      const auto& prod = _producers.get( from.value );
+      const auto& prod = _producers.find( from.value );
 
-      if( prod.active()){
+      if(prod != _producers.end() && prod->active()){
          //10 million UTX self-staking requirement
          del_bandwidth_table     del_tbl( get_self(), from.value );
          auto itr = del_tbl.find( from.value );
