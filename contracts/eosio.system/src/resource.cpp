@@ -278,12 +278,9 @@ namespace eosiosystem {
          }
 
          std::vector<name> active_producers;
-         for (const auto &p : _producers)
-         {
-            if (p.active())
-            {
-               active_producers.emplace_back(p.owner);
-            }
+         auto idx = _producers.get_index<"prototalvote"_n>();
+         for( auto it = idx.cbegin(); it != idx.cend() && active_producers.size() < 21 && 0 < it->total_votes && it->active(); ++it ) {
+             active_producers.emplace_back(it->owner);
          }
 
         // check there are enough active producers
