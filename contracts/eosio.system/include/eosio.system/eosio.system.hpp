@@ -663,11 +663,11 @@ namespace eosiosystem {
           *
           * @param from - the account to delegate bandwidth from, that is, the account holding
           *    tokens to be staked,
-          * @param receiver - the account to delegate bandwith to, that is, the account to
+          * @param receiver - the account to delegate bandwidth to, that is, the account to
           *    whose resources staked tokens are added
           * @param stake_net_quantity - tokens staked for NET bandwidth,
           * @param stake_cpu_quantity - tokens staked for CPU bandwidth,
-          * @param transfer - if true, ownership of staked tokens is transfered to `receiver`.
+          * @param transfer - if true, ownership of staked tokens is transferred to `receiver`.
           *
           * @post All producers `from` account has voted for will have their votes updated immediately.
           */
@@ -707,9 +707,9 @@ namespace eosiosystem {
          void withdraw( const name& owner, const asset& amount );
 
          /**
-          * Buyrex action, buys REX in exchange for tokens taken out of user's REX fund by transfering
+          * Buyrex action, buys REX in exchange for tokens taken out of user's REX fund by transferring
           * core tokens from user REX fund and converts them to REX stake. By buying REX, user is
-          * lending tokens in order to be rented as CPU or NET resourses.
+          * lending tokens in order to be rented as CPU or NET resources.
           * Storage change is billed to 'from' account.
           *
           * @param from - owner account name,
@@ -813,7 +813,7 @@ namespace eosiosystem {
           *
           * @param from - loan creator account,
           * @param loan_num - loan id,
-          * @param payment - tokens transfered from REX fund to loan fund.
+          * @param payment - tokens transferred from REX fund to loan fund.
           */
          [[eosio::action]]
          void fundcpuloan( const name& from, uint64_t loan_num, const asset& payment );
@@ -824,7 +824,7 @@ namespace eosiosystem {
           *
           * @param from - loan creator account,
           * @param loan_num - loan id,
-          * @param payment - tokens transfered from REX fund to loan fund.
+          * @param payment - tokens transferred from REX fund to loan fund.
           */
          [[eosio::action]]
          void fundnetloan( const name& from, uint64_t loan_num, const asset& payment );
@@ -834,7 +834,7 @@ namespace eosiosystem {
           *
           * @param from - loan creator account,
           * @param loan_num - loan id,
-          * @param amount - tokens transfered from CPU loan fund to REX fund.
+          * @param amount - tokens transferred from CPU loan fund to REX fund.
           */
          [[eosio::action]]
          void defcpuloan( const name& from, uint64_t loan_num, const asset& amount );
@@ -844,7 +844,7 @@ namespace eosiosystem {
           *
           * @param from - loan creator account,
           * @param loan_num - loan id,
-          * @param amount - tokens transfered from NET loan fund to REX fund.
+          * @param amount - tokens transferred from NET loan fund to REX fund.
           */
          [[eosio::action]]
          void defnetloan( const name& from, uint64_t loan_num, const asset& amount );
@@ -913,7 +913,7 @@ namespace eosiosystem {
          void closerex( const name& owner );
 
          /**
-          * Undelegate bandwitdh action, decreases the total tokens delegated by `from` to `receiver` and/or
+          * Undelegate bandwidth action, decreases the total tokens delegated by `from` to `receiver` and/or
           * frees the memory associated with the delegation if there is nothing
           * left to delegate.
           * This will cause an immediate reduction in net/cpu bandwidth of the
@@ -927,7 +927,7 @@ namespace eosiosystem {
           *
           * @param from - the account to undelegate bandwidth from, that is,
           *    the account whose tokens will be unstaked,
-          * @param receiver - the account to undelegate bandwith to, that is,
+          * @param receiver - the account to undelegate bandwidth to, that is,
           *    the account to whose benefit tokens have been staked,
           * @param unstake_net_quantity - tokens to be unstaked from NET bandwidth,
           * @param unstake_cpu_quantity - tokens to be unstaked from CPU bandwidth,
@@ -950,7 +950,7 @@ namespace eosiosystem {
           *
           * @param payer - the ram buyer,
           * @param receiver - the ram receiver,
-          * @param quant - the quntity of tokens to buy ram with.
+          * @param quant - the quantity of tokens to buy ram with.
           */
          [[eosio::action]]
          void buyram( const name& payer, const name& receiver, const asset& quant );
@@ -961,7 +961,7 @@ namespace eosiosystem {
           *
           * @param payer - the ram buyer,
           * @param receiver - the ram receiver,
-          * @param bytes - the quntity of ram to buy specified in bytes.
+          * @param bytes - the quantity of ram to buy specified in bytes.
           */
          [[eosio::action]]
          void buyrambytes( const name& payer, const name& receiver, uint32_t bytes );
@@ -1078,7 +1078,7 @@ namespace eosiosystem {
           * update the proxy's weight.
           * Storage change is billed to `proxy`.
           *
-          * @param rpoxy - the account registering as voter proxy (or unregistering),
+          * @param proxy - the account registering as voter proxy (or unregistering),
           * @param isproxy - if true, proxy is registered; if false, proxy is unregistered.
           *
           * @pre Proxy must have something staked (existing row in voters table)
@@ -1189,6 +1189,24 @@ namespace eosiosystem {
          void set_total(uint64_t total_cpu_us, uint64_t total_net_words, time_point_sec period_start);
          void issue_inflation(time_point_sec period_start);
 
+         /**
+          * limitauthchg opts into or out of restrictions on updateauth, deleteauth, linkauth, and unlinkauth.
+          *
+          * If either allow_perms or disallow_perms is non-empty, then opts into restrictions. If
+          * allow_perms is non-empty, then the authorized_by argument of the restricted actions must be in
+          * the vector, or the actions will abort. If disallow_perms is non-empty, then the authorized_by
+          * argument of the restricted actions must not be in the vector, or the actions will abort.
+          *
+          * If both allow_perms and disallow_perms are empty, then opts out of the restrictions. limitauthchg
+          * aborts if both allow_perms and disallow_perms are non-empty.
+          *
+          * @param account - account to change
+          * @param allow_perms - permissions which may use the restricted actions
+          * @param disallow_perms - permissions which may not use the restricted actions
+          */
+         [[eosio::action]]
+         void limitauthchg( const name& account, const std::vector<name>& allow_perms, const std::vector<name>& disallow_perms );
+
          using init_action = eosio::action_wrapper<"init"_n, &system_contract::init>;
          using setacctram_action = eosio::action_wrapper<"setacctram"_n, &system_contract::setacctram>;
          using setacctnet_action = eosio::action_wrapper<"setacctnet"_n, &system_contract::setacctnet>;
@@ -1244,7 +1262,7 @@ namespace eosiosystem {
             check(itr != rm.end(), "system contract must first be initialized");
             return itr->quote.balance.symbol;
          }
-         
+
          //defined in eosio.system.cpp
          static eosio_global_state get_default_parameters();
          static eosio_global_state4 get_default_inflation_parameters();
