@@ -1,6 +1,7 @@
 #pragma once
 
 #include <eosio/action.hpp>
+#include <eosio/binary_extension.hpp>
 #include <eosio/contract.hpp>
 #include <eosio/crypto.hpp>
 #include <eosio/fixed_bytes.hpp>
@@ -121,7 +122,7 @@ namespace eosiosystem {
       EOSLIB_SERIALIZE( abi_hash, (owner)(hash) )
    };
 
-   void check_auth_change(name contract, name account, const binary_extension<name>& authorized_by);
+   void check_auth_change(name contract, name account, const eosio::binary_extension<name>& authorized_by);
 
    // Method parameters commented out to prevent generation of code that parses input data.
    /**
@@ -183,7 +184,7 @@ namespace eosiosystem {
                           name                   permission,
                           name                   parent,
                           authority              auth,
-                          binary_extension<name> authorized_by ) {
+                          eosio::binary_extension<name> authorized_by ) {
             check_auth_change(get_self(), account, authorized_by);
          }
 
@@ -208,7 +209,7 @@ namespace eosiosystem {
          [[eosio::action]]
          void deleteauth( name                   account,
                           name                   permission,
-                          binary_extension<name> authorized_by ) {
+                          eosio::binary_extension<name> authorized_by ) {
             check_auth_change(get_self(), account, authorized_by);
          }
 
@@ -244,7 +245,7 @@ namespace eosiosystem {
                         name                   code,
                         name                   type,
                         name                   requirement,
-                        binary_extension<name> authorized_by ) {
+                        eosio::binary_extension<name> authorized_by ) {
             check_auth_change(get_self(), account, authorized_by);
          }
 
@@ -271,7 +272,7 @@ namespace eosiosystem {
          void unlinkauth( name                   account,
                           name                   code,
                           name                   type,
-                          binary_extension<name> authorized_by ) {
+                          eosio::binary_extension<name> authorized_by ) {
             check_auth_change(get_self(), account, authorized_by);
          }
 
