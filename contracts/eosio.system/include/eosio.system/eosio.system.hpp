@@ -1096,6 +1096,14 @@ namespace eosiosystem {
          void setparams( const eosio::blockchain_parameters& params );
 
          /**
+          * Sets the WebAssembly limits.  Valid parameters are "low",
+          * "default" (equivalent to low), and "high".  A value of "high"
+          * allows larger contracts to be deployed.
+          */
+         [[eosio::action]]
+         void wasmcfg( const name& settings );
+
+         /**
           * Claim rewards action, claims block producing and vote rewards.
           * @param owner - producer account claiming per-block and per-vote rewards.
           */
